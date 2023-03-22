@@ -25,10 +25,10 @@ model = "text-davinci-003"
 chat_model = "gpt-3.5-turbo"
 # model = "text-davinci-002"
 
-@client.event()
-async def on_ready():
-    print(f"Client Logged in with {client.user.name}")
-    print(f"Client AppId {client.application_id}")
+# @client.event()
+# async def on_ready():
+#     print(f"Client Logged in with {client.user.name}")
+#     print(f"Client AppId {client.application_id}")
 
 
 @bot.event
