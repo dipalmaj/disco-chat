@@ -25,18 +25,11 @@ model = "text-davinci-003"
 chat_model = "gpt-3.5-turbo"
 # model = "text-davinci-002"
 
-# @client.event()
-# async def on_ready():
-#     print(f"Client Logged in with {client.user.name}")
-#     print(f"Client AppId {client.application_id}")
-
 
 @bot.event
 async def on_ready():
     print(f"Logged in as {bot.user.name}")
     print(f"Application ID: {bot.application_id}")
-    # commandTree = discord.app_commands.CommandTree(client)
-    # await commandTree.sync()
 
 
 @bot.command()
@@ -76,6 +69,9 @@ async def code(ctx, *, question):
     await ctx.send("```\n" + response.choices[0].text + "\n```")
 
 
+# Attempted to make use of hybrid_command which should allow commands to be registered to slash;
+# however, you need to sync the CommandTree and that requires client...
+# Didn't get it to work... discord.app_commands.CommandTree(client).sync()
 @bot.hybrid_command()
 async def about(ctx):
     await ctx.send("DiscoChat is a basic chatGPT relay.\n"
