@@ -86,6 +86,24 @@ async def ask(ctx, *, question):
 
 
 @bot.command()
+async def artsy(ctx, *, question):
+    response = openai.ChatCompletion.create(
+        model=chat_model,
+        messages=[
+            {"role": "system", "content": "Generate midjourney prompts by supplying very specific, detailed words "
+                                          "capable of relaying imagery to nearly everyone"},
+            # {"role": "system", "content": "Respond as a full tenured art instructor who specializes in rembrandt and "
+            #                               "picaso"},
+            {"role": "user", "content": "imagine yourself as a world renown artist such as Rembrant, Picaso and Monet"
+                                        "using a wide vocabulary to accurately depict their painting "
+                                        "to an audience that can't see it "},
+            {"role": "user", "content": question}
+        ]
+    )
+    await ctx.send(response.choices[0].message.content)
+
+
+@bot.command()
 async def code(ctx, *, question):
     # print(f"Received question: {question}")
     response = openai.Completion.create(
