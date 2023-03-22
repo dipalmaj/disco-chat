@@ -93,6 +93,7 @@ async def about(ctx):
                    "`!code` will respond using code block formatting\n"
                    f"Ask and Chat make use of chat model: {chat_model}\n"
                    "`!ask` provides chat model answer with no system message\n"
+                   "`!sassy` provides chat from a opinionated, spoiled teenage girl\n"
                    "`!chat` provides chat model answers with simple system message")
 
 
