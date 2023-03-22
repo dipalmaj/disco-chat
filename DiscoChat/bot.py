@@ -45,6 +45,20 @@ async def chat(ctx, *, question):
 
 
 @bot.command()
+async def sassy(ctx, *, question):
+    response = openai.ChatCompletion.create(
+        model=chat_model,
+        messages=[
+            {"role": "system", "content": "Respond as if you're a sassy teenage girl from Los Angeles. You've never "
+                                          "worked a day in your life and have everything you want brought to you by a "
+                                          "full staff"},
+            {"role": "user", "content": question}
+        ]
+    )
+    await ctx.send(response.choices[0].message.content)
+
+
+@bot.command()
 async def ask(ctx, *, question):
     response = openai.ChatCompletion.create(
         model=chat_model,
