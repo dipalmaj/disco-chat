@@ -25,11 +25,27 @@ model = "text-davinci-003"
 chat_model = "gpt-3.5-turbo"
 # model = "text-davinci-002"
 
+chat_agent = "You are a helpful chat agent helping software developers with questions"
+
 
 @bot.event
 async def on_ready():
     print(f"Logged in as {bot.user.name}")
     print(f"Application ID: {bot.application_id}")
+    print(f"Chat agent: {chat_agent}")
+
+
+@bot.command()
+async def describe_chat_agent(ctx):
+    print(chat_agent)
+    await ctx.send(f"DiscoChat Agent is set as \"{chat_agent}\"")
+
+
+@bot.command()
+async def set_chat_agent(ctx, *, chat_agent_description):
+    global chat_agent
+    chat_agent = chat_agent_description
+    await ctx.send(f"Attempting to update agent\nAgent set to \"{chat_agent}\"")
 
 
 @bot.command()
@@ -37,7 +53,7 @@ async def chat(ctx, *, question):
     response = openai.ChatCompletion.create(
         model=chat_model,
         messages=[
-            {"role": "system", "content": "You are a helpful chat agent helping software developers with questions"},
+            {"role": "system", "content": chat_agent},
             {"role": "user", "content": question}
         ]
     )
