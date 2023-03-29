@@ -8,7 +8,6 @@ from discord.ext import commands
 import argparse
 import atexit
 
-
 load_dotenv()  # load environment variables from .env file
 
 openai.api_key = os.getenv("OPENAI_API_KEY")  # set OpenAI API key from .env file
@@ -19,7 +18,11 @@ intents.message_content = True
 
 bot = commands.Bot(command_prefix="!", intents=intents)  # create a Discord bot instance
 
-client = discord.Client(intents=intents)
+try:
+    discord_user_id = int(os.getenv("DISCORD_USER_ID"))
+except ValueError:
+    print("Unable to cast discord id properly. Verify value is setup properly")
+    discord_user_id = "NotSet"
 
 model = "text-davinci-003"
 chat_model = "gpt-3.5-turbo"
@@ -43,9 +46,25 @@ async def describe_chat_agent(ctx):
 
 @bot.command()
 async def set_chat_agent(ctx, *, chat_agent_description):
-    global chat_agent
-    chat_agent = chat_agent_description
-    await ctx.send(f"Attempting to update agent\nAgent set to \"{chat_agent}\"")
+    if not permission_check(ctx.author.roles, ['Admin']):
+        await ctx.send(f"So sorry! I can't do that see your admin for privileges")
+    else:
+        global chat_agent
+        chat_agent = chat_agent_description
+        await ctx.send(f"Attempting to update agent\nAgent set to \"{chat_agent}\"")
+
+
+@bot.command()
+async def check_user(ctx):
+    channel = ctx.channel.name
+    if discord_user_id == ctx.author.id:
+        await ctx.send(f'Hello owner!')
+    elif permission_check(ctx.author.roles, ['Admin', 'Tester']):
+        await ctx.send(f'Checking')
+        user = discord.utils.get(bot.get_all_members(), id=ctx.author.id)
+        print(f'User:{user.name} and channel: {channel}')
+    else:
+        await ctx.send("So sorry! this functionality is protected")
 
 
 @bot.command()
@@ -126,11 +145,14 @@ async def about(ctx):
                    f"Code uses model: {model}\n"
                    "`!code` will respond using code block formatting\n"
                    f"Ask and Chat make use of chat model: {chat_model}\n"
+                   "`!describe_chat_agent` returns the currently set value for the chat agent's system message\n"
+                   "`!set_chat_agent` updates chat agent's system message\n"
                    "`!ask` provides chat model answer with no system message\n"
                    "`!sassy` provides chat from a opinionated, spoiled teenage girl\n"
                    "`!chat` provides chat model answers with simple system message")
 
 
+# TODO see about adding a sign-off for the bot to post
 def graceful_shutdown():
     try:
         print("Shutting down gracefully...")
@@ -143,6 +165,16 @@ def graceful_shutdown():
         sys.exit(0)
 
 
+# Not fully flushed out, but feel like functionality will be useful across functions
+# TODO think about design of this function, may be easier for called to just pass ctx
+def permission_check(author_roles, expected_roles):
+    for role in expected_roles:
+        if not discord.utils.get(author_roles, name=role):
+            return False
+    return True
+
+
+# TODO add discord async errors
 def main(verbose):
     bot.run(os.getenv("DISCORD_BOT_TOKEN"))  # connect to Discord using the bot token
 
