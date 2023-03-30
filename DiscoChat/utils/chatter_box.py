@@ -1,9 +1,8 @@
 import openai
 
-
 sassy_agent = "Respond as if you're a sassy teenage girl from Los Angeles. " \
-                  "You've never worked a day in your life " \
-                  "and have everything you want brought to you by a full staff"
+              "You've never worked a day in your life " \
+              "and have everything you want brought to you by a full staff"
 
 
 class ChatterBox:
@@ -23,6 +22,7 @@ class ChatterBox:
         self.model = "text-davinci-003"
         self._current_messages = list()
         self._messages_sent = True
+        self._artsy_version = 0
 
     @property
     def chat_agent(self):
@@ -78,12 +78,16 @@ class ChatterBox:
         return self.send_to_agent(question, sassy_agent)
 
     def send_to_artsy(self, question):
-        artsy_agent = "Generate midjourney prompts by supplying very specific, detailed words "\
-                       "capable of relaying imagery to nearly everyone"
+        """
+        Generate art prompts for another AI to make images with
+        TODO make artsy update-able and track the versions all through the bot.
+        """
+        artsy_agent = "imagine yourself as a world renown artist such as Rembrandt use" \
+                      "very specific, detailed words and " \
+                      "descriptions need to be concise but create an image for an audience " \
+                      "that can't view it."
         questions = [
-            "imagine yourself as a world renown artist such as Rembrandt, Picaso and Monet"
-            "using a wide vocabulary to accurately depict their painting "
-            "to an audience that can't see it ",
+            "clearly articulate the image for the idea that follows in a single paragraph if possible",
             question
         ]
         return self.send_to_agent(questions, artsy_agent)
